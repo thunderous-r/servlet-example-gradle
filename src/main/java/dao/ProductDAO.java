@@ -24,4 +24,6 @@ public class ProductDAO {
             throw new RuntimeException(e);
         }
     }
+
+    //TODO: store products in DB instead of file
 }

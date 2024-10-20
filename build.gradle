@@ -34,6 +34,8 @@ dependencies {
   implementation("org.postgresql:postgresql:42.7.3")
   runtimeOnly("org.apache.taglibs:taglibs-standard-impl:1.2.5")
   implementation("org.glassfish.web:javax.servlet.jsp.jstl:1.2.5")
+  implementation("org.postgresql:postgresql:42.7.4")
+  implementation("com.zaxxer:HikariCP:5.0.1")
 }
 
 test {

@@ -1,6 +1,8 @@
 package listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import dao.ProductDAO;
 import dao.UserDAO;
 import javax.servlet.ServletContext;
@@ -12,18 +14,30 @@ import service.ProductService;
 import service.UserService;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 @WebListener
 public class InitializationListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
+        Properties dbProperties = new Properties();
+        try {
+            FileInputStream fis = new FileInputStream("C:\\YandexDisk\\IdeaProjects\\servlet-example-gradle\\src\\main\\resources\\db.properties");
+            dbProperties.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HikariConfig config = new HikariConfig(dbProperties);
+        HikariDataSource ds = new HikariDataSource(config);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        File usersFile = new File("C:\\YandexDisk\\IdeaProjects\\servlet-example-gradle\\src\\main\\resources\\users.json");
         File productsFile = new File("C:\\YandexDisk\\IdeaProjects\\servlet-example-gradle\\src\\main\\resources\\products.json");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        UserDAO userDAO = new UserDAO(objectMapper, usersFile);
+        UserDAO userDAO = new UserDAO(ds);
+
         ProductDAO productDAO = new ProductDAO(objectMapper, productsFile);
         UserService userService = new UserService(userDAO);
         ProductService productService = new ProductService(productDAO);

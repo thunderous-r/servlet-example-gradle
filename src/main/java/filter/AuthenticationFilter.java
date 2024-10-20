@@ -15,7 +15,7 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         if (session.getAttribute("userId") != null) {
-            request.getRequestDispatcher("/secure/products.jsp").forward(request, response);
+            filterChain.doFilter(request, response);
         } else {
             response.sendRedirect("/login");
         }
