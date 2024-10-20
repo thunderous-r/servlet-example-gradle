@@ -32,13 +32,11 @@ public class InitializationListener implements ServletContextListener {
         HikariConfig config = new HikariConfig(dbProperties);
         HikariDataSource ds = new HikariDataSource(config);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        File productsFile = new File("C:\\YandexDisk\\IdeaProjects\\servlet-example-gradle\\src\\main\\resources\\products.json");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         UserDAO userDAO = new UserDAO(ds);
 
-        ProductDAO productDAO = new ProductDAO(objectMapper, productsFile);
+        ProductDAO productDAO = new ProductDAO(ds);
         UserService userService = new UserService(userDAO);
         ProductService productService = new ProductService(productDAO);
 

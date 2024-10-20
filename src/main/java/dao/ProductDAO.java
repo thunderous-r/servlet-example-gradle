@@ -1,29 +1,56 @@
 package dao;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zaxxer.hikari.HikariDataSource;
 import entity.Product;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ProductDAO {
-    private final ObjectMapper mapper;
-    private final File file;
+    private final HikariDataSource dataSource;
 
     public void save(Product product) {
-        try {
-            List<Product> products = mapper.readValue(file, new TypeReference<List<Product>>() {
-            });
-            products.add(product);
-            mapper.writeValue(file, products);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        String sql = "insert into products (img_src, name, owner_uuid) values (?, ?, ?)";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, product.getImgSrc());
+            preparedStatement.setString(2, product.getName());
+            preparedStatement.setString(3, product.getOwnerId().toString());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving product to database", e);
         }
     }
 
-    //TODO: store products in DB instead of file
+    public ArrayList<Product> getAllProducts(String uuid) {
+
+        ArrayList<Product> products = new ArrayList<>();
+
+        String sql = "select * from products where owner_uuid = uuid";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Product product = Product.builder()
+                        .imgSrc(resultSet.getString("img_src"))
+                        .name(resultSet.getString("name"))
+                        .ownerId(UUID.fromString(resultSet.getString("owner_uuid")))
+                        .build();
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting all products from database", e);
+        }
+        return products;
+    }
 }

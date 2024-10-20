@@ -36,7 +36,6 @@ public class ProductServlet extends HttpServlet {
         String name = req.getParameter("name");
         UUID ownerID = UUID.fromString(session.getAttribute("userId").toString());
         productService.save(Product.builder().
-                id(UUID.randomUUID()).
                 imgSrc(imgSrc).
                 name(name).
                 ownerId(ownerID).build());

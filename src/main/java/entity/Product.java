@@ -10,7 +10,6 @@ import java.util.UUID;
 @Builder
 @Getter
 public class Product {
-    private UUID id;
     private String name;
     private String imgSrc;
     private UUID ownerId;
