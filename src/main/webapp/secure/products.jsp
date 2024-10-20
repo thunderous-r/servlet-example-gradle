@@ -13,7 +13,6 @@
     <link rel="stylesheet" media="screen" href="../css/index.css">
 </head>
 <body>
-<h1>THIS IS THE PRODUCTS PAGE UNDER CONSTRUCTION</h1>
 <div class="container">
     <div class="card">
         <h2>Add product</h2>
@@ -23,6 +22,15 @@
             <button type="submit">Add</button>
         </form>
     </div>
+    <c:forEach var="product" items="${requestScope.products}">
+        <p>${product.name}</p>
+        <img src="${product.imgSrc}" height="150px" alt="${product.name}">
+        <form action="/secure/products">
+            <input type="hidden" name="_method" value="DELETE"/>
+            <input type="hidden" name="productId" value="${product.id}"/>
+            <button type="submit">Delete</button>
+        </form>
+    </c:forEach>
 </div>
 </body>
 </html>

@@ -13,7 +13,9 @@ public class ProductService {
         productDAO.save(product);
     }
 
-    public List<Product> getAllProducts(String uuid) {
-        return productDAO.getAllProducts(uuid);
+    public List<Product> getUserProducts(String uuid) {
+        return productDAO.getUserProducts(uuid);
     }
+
+    //TODO: delete product
 }

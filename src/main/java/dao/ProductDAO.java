@@ -32,16 +32,18 @@ public class ProductDAO {
         }
     }
 
-    public ArrayList<Product> getAllProducts(String uuid) {
+    public ArrayList<Product> getUserProducts(String uuid) {
 
         ArrayList<Product> products = new ArrayList<>();
 
-        String sql = "select * from products where owner_uuid = uuid";
+        String sql = "select * from products where owner_uuid = ?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, uuid);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Product product = Product.builder()
+                        .id(resultSet.getInt("id"))
                         .imgSrc(resultSet.getString("img_src"))
                         .name(resultSet.getString("name"))
                         .ownerId(UUID.fromString(resultSet.getString("owner_uuid")))
@@ -53,4 +55,6 @@ public class ProductDAO {
         }
         return products;
     }
+
+    //TODO: add delete method
 }

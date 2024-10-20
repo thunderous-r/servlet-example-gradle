@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(urlPatterns = {"/secure/products"})
@@ -26,6 +27,10 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        String userId = session.getAttribute("userId").toString();
+        List<Product> products = productService.getUserProducts(userId);
+        req.setAttribute("products", products);
         req.getRequestDispatcher("/secure/products.jsp").forward(req, resp);
     }
 
@@ -39,5 +44,8 @@ public class ProductServlet extends HttpServlet {
                 imgSrc(imgSrc).
                 name(name).
                 ownerId(ownerID).build());
+        resp.sendRedirect("/secure/products");
     }
+
+    //TODO: add delete action
 }
